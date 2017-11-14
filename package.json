@@ -18,6 +18,9 @@
   "homepage": "https://github.com/pasever/hangman#readme",
   "dependencies": {
     "dotenv": "^4.0.0",
+    "inquirer": "^4.0.0",
+    "keypress": "^0.2.1",
+    "prompt": "^1.0.0",
     "unirest": "^0.5.1"
   }
 }
