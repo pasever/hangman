@@ -4,14 +4,14 @@ var inquirer = require('inquirer');
 //var keypress = require('keypress');
 require('dotenv').config();
 //keypress(process.stdin);
-//prompt.start();
+prompt.start();
 
 
 inquirer.prompt([
   {
     type: "confirm",
     name: "gameStart",
-    message: "Welcome to the hagman. Ready to start a new game?"
+    message: "Welcome to the hangman. Ready to start a new game?"
   }
 ]).then(function(par) {
   if (par.gameStart) {
@@ -48,12 +48,13 @@ function generate(callback) {
 function Game(word, definition, partOfSpeech) {
   
   this.word = word;
+  //console.log(this.word.length);
   this.definition = definition;
   this.partOfSpeech = partOfSpeech;
   this.blankWordArray = [];
   this.guessesLeft = 8;
-  
-  console.log(this.word);
+
+  //console.log(this.word);
   
   // this.synonyms = false;
   let newWordArray = [...this.word];
@@ -70,14 +71,11 @@ function Game(word, definition, partOfSpeech) {
   
   this.endGame = function() {
 
-    console.log("");
-    console.log("");
-
     if (this.guessesLeft === 0) {
 
       console.log("###############################################");
       console.log("");
-      console.log("Game over. Please play agian");
+      console.log("Game over. Play agian?");
       console.log("");
       console.log("###############################################");
 
@@ -101,31 +99,29 @@ function Game(word, definition, partOfSpeech) {
         message: "Please, guess a letter"
       }
     ]).then(function(guess) {
-      //console.log(guess.guessLetter);
       var found = false;
       
-      for (var i = 0; i < this.word.length; i++){
+      for ( var i = 0; i < this.word.length; i++ ){
         
         
-        if ( guess.userGuess.toLowerCase() === this.word[i].toLowerCase() ){
-        
-          console.log("Great job!");
+        if ( guess.userGuess.toUpperCase() === this.word[i].toUpperCase() ){
           found = true;
-          // Add to array
-          
+          this.blankWordArray.push(this.word[indexOf(i)]);
+          console.log("Great job!");
+          console.log(this.blankWordArray);        
         }
         
       }
-      
+      //if guess is incorrect
       if (!found) {
         this.guessesLeft--;
       }
-      
-      this.endGame(); //Check if game over
+      //Check if game over
+      this.endGame(); 
       
     }) 
   }
-  
+  // guess a letter again
   this.guessLetter();
   
 }
