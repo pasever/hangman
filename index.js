@@ -1,23 +1,19 @@
 var unirest = require('unirest');
 var prompt = require('prompt');
 var inquirer = require('inquirer');
-//var keypress = require('keypress');
 require('dotenv').config();
 let end = false;
 guessesLeft = 8;
+var winArray = [];
 
 function Word(word, definition, partOfSpeech, blankWordArray) {
+
   this.word = word;
   this.definition = definition;
   this.partOfSpeech = partOfSpeech;
   this.blankWordArray = blankWordArray;
-  this.finalWord = [...word];
+  this.finalWord = [...(word.toUpperCase())];
 }
-
-// function Letter(guess) {
-//   this.guess = guess;
-//   this.guessesLeft = guessesLeft;
-// }
 
 prompt.start();
 
@@ -29,6 +25,7 @@ inquirer.prompt([
   }
 ]).then(function(par) {
   if (par.gameStart) {
+    guessesLeft = 8;
     generate();
   } else {
     console.log("See you next time then. You are probably are not good at this game anyway...");
@@ -64,18 +61,22 @@ function game(word) {
 
   let myWord = word;
   let leng = myWord.word.length;
-  console.log(myWord);
+  //console.log(myWord);
+  console.log("");
   console.log("Definition: " + myWord.definition);
-  
+
   for (var i = 0; i < leng; i++) {
     myWord.blankWordArray.push("*");
   }
+
   guessLetter(myWord, leng);
 
 }
 
 function guessLetter(myWord, leng) {
+  console.log("");
   console.log(myWord.blankWordArray.join(" "));
+  console.log("");
 
   if (!end) {
     inquirer.prompt([
@@ -88,19 +89,56 @@ function guessLetter(myWord, leng) {
       var found = false;
       for (var i = 0; i < leng; i++) {
         if (guess.userGuess.toUpperCase() === myWord.finalWord[i].toUpperCase()) {
+
           found = true;
           myWord.blankWordArray[i] = guess.userGuess.toUpperCase();
+          winArray.push(guess.userGuess.toUpperCase());
+          console.log("");
           console.log("Great job!");
-          console.log(myWord.blankWordArray);
+          //console.log(myWord.blankWordArray);
+          //console.log(myWord.finalWord);
 
+          if (winArray.length === myWord.blankWordArray.length) {
+
+            console.log("###############################################");
+            
+            console.log("Congratulations!!");
+            console.log("You won!!!!!!");
+            console.log("");
+            console.log("###############################################");
+            console.log("");
+
+            inquirer.prompt([
+              {
+                type: "confirm",
+                name: "gameStart",
+                message: "Do you want to start another game?"
+              }
+            ]).then(function(par) {
+              if (par.gameStart) {
+                generate();
+              } else {
+                console.log("###############################################");
+                console.log("");
+                console.log("That was fun. Come back soon!");
+                console.log("");
+                console.log("###############################################");
+                process.exit();
+              }
+            });
+            return;
+          }
         }
       }
       if (!found) {
+        console.log("");
         console.log("Please try again!");
         guessesLeft--;
-        console.log("You have " + guessesLeft + " left");
-        console.log(myWord.blankWordArray);
-        
+        console.log("");
+        console.log("You have " + guessesLeft + " attempts left");
+        console.log("");
+        //console.log(myWord.blankWordArray);
+
         if (guessesLeft === 0) {
 
           console.log("###############################################");
@@ -108,8 +146,10 @@ function guessLetter(myWord, leng) {
           console.log("Game over");
           console.log("");
           console.log("###############################################");
-          
+          console.log("");
+
           inquirer.prompt([
+            
             {
               type: "confirm",
               name: "gameStart",
@@ -119,15 +159,18 @@ function guessLetter(myWord, leng) {
             if (par.gameStart) {
               generate();
             } else {
+              console.log("");
               console.log("That was fun. Come back soon!");
+              console.log("");
               process.exit();
             }
-          });
+          });  
           return;
-        }
-        
+        }  
       }
+      
       guessLetter(myWord, leng);
+      
     });
 
   } else {
