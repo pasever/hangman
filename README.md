@@ -9,9 +9,7 @@ A hangman command-line game using constructor functions.
 
 ## Instructions
 
-The completed game should meet the following criteria:
-
-1. The completed game should be able to receive user input using the `inquirer` or `prompt` npm packages.
+1. This game receives an user input using the `inquirer` npm packages.
 
 2. Feel free to use as many different types of constructor functions as you are able to, but at a minimum, you must create the following constructor functions:
 
@@ -48,3 +46,5 @@ If you have any questions about this project or the material we have covered, pl
 - - -
 
 ## Copyright
+
+MIT
