@@ -3,9 +3,23 @@ var prompt = require('prompt');
 var inquirer = require('inquirer');
 //var keypress = require('keypress');
 require('dotenv').config();
-//keypress(process.stdin);
-prompt.start();
+let end = false;
+guessesLeft = 8;
 
+function Word(word, definition, partOfSpeech, blankWordArray) {
+  this.word = word;
+  this.definition = definition;
+  this.partOfSpeech = partOfSpeech;
+  this.blankWordArray = blankWordArray;
+  this.finalWord = [...word];
+}
+
+// function Letter(guess) {
+//   this.guess = guess;
+//   this.guessesLeft = guessesLeft;
+// }
+
+prompt.start();
 
 inquirer.prompt([
   {
@@ -15,83 +29,55 @@ inquirer.prompt([
   }
 ]).then(function(par) {
   if (par.gameStart) {
-    generate(generate);
+    generate();
   } else {
-    console.log("See you next time then...");
+    console.log("See you next time then. You are probably are not good at this game anyway...");
     process.exit();
   }
 });
 
-function generate(callback) {
+function generate() {
 
   unirest.get("https://wordsapiv1.p.mashape.com/words/?random=true").header("X-Mashape-Key", process.env.MASHAPE_KEY).header("Accept", "application/json").end(function(result) {
 
     //console.log(result.status, result.headers, result.body)
     if (typeof result.body.results === 'undefined') {
-    
-      callback(generate);
-  
+
+      generate();
+
     } else {
 
       let newDefinition = result.body.results[0].definition;
       let newPartSpeech = result.body.results[0].partOfSpeech;
       let newWord = result.body.word;
-      
-      new Game(newWord, newDefinition, newPartSpeech);
+      let arr = [];
+      let currWord = new Word(newWord, newDefinition, newPartSpeech, arr);
       //console.log(result.caseless['dict']['x-ratelimit-requests-remaining']);
-      
+      game(currWord);
+
     }
   });
+
 }
 
+function game(word) {
 
-function Game(word, definition, partOfSpeech) {
+  let myWord = word;
+  let leng = myWord.word.length;
+  console.log(myWord);
+  console.log("Definition: " + myWord.definition);
   
-  this.word = word;
-  //console.log(this.word.length);
-  this.definition = definition;
-  this.partOfSpeech = partOfSpeech;
-  this.blankWordArray = [];
-  this.guessesLeft = 8;
-
-  //console.log(this.word);
-  
-  // this.synonyms = false;
-  let newWordArray = [...this.word];
-  console.log("Definition: " + definition);
-  //console.log(partOfSpeech);
-
-  for (var i = 0; i < newWordArray.length; i++) {
-    this.blankWordArray.push("_");
+  for (var i = 0; i < leng; i++) {
+    myWord.blankWordArray.push("*");
   }
-  
-  console.log(this.blankWordArray);
-  //console.log(blankWordArray.toString());
-  //userGuess(newWordArray);
-  
-  this.endGame = function() {
+  guessLetter(myWord, leng);
 
-    if (this.guessesLeft === 0) {
+}
 
-      console.log("###############################################");
-      console.log("");
-      console.log("Game over. Play agian?");
-      console.log("");
-      console.log("###############################################");
+function guessLetter(myWord, leng) {
+  console.log(myWord.blankWordArray.join(" "));
 
-      process.exit();
-      
-      
-    } else {
-      
-      this.guessLetter();
-      
-    }
-    //guessLetter(newWordArray);
-  }
-  
-  this.guessLetter = function() {
-    
+  if (!end) {
     inquirer.prompt([
       {
         type: "input",
@@ -100,32 +86,52 @@ function Game(word, definition, partOfSpeech) {
       }
     ]).then(function(guess) {
       var found = false;
-      
-      for ( var i = 0; i < this.word.length; i++ ){
-        
-        
-        if ( guess.userGuess.toUpperCase() === this.word[i].toUpperCase() ){
+      for (var i = 0; i < leng; i++) {
+        if (guess.userGuess.toUpperCase() === myWord.finalWord[i].toUpperCase()) {
           found = true;
-          this.blankWordArray.push(this.word[indexOf(i)]);
+          myWord.blankWordArray[i] = guess.userGuess.toUpperCase();
           console.log("Great job!");
-          console.log(this.blankWordArray);        
+          console.log(myWord.blankWordArray);
+
+        }
+      }
+      if (!found) {
+        console.log("Please try again!");
+        guessesLeft--;
+        console.log("You have " + guessesLeft + " left");
+        console.log(myWord.blankWordArray);
+        
+        if (guessesLeft === 0) {
+
+          console.log("###############################################");
+          console.log("");
+          console.log("Game over");
+          console.log("");
+          console.log("###############################################");
+          
+          inquirer.prompt([
+            {
+              type: "confirm",
+              name: "gameStart",
+              message: "Do you want to start another game?"
+            }
+          ]).then(function(par) {
+            if (par.gameStart) {
+              generate();
+            } else {
+              console.log("That was fun. Come back soon!");
+              process.exit();
+            }
+          });
+          return;
         }
         
       }
-      //if guess is incorrect
-      if (!found) {
-        this.guessesLeft--;
-      }
-      //Check if game over
-      this.endGame(); 
-      
-    }) 
+      guessLetter(myWord, leng);
+    });
+
+  } else {
+
+    return;
   }
-  // guess a letter again
-  this.guessLetter();
-  
 }
-
-
-
-
