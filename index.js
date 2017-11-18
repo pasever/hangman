@@ -3,7 +3,7 @@ var prompt = require('prompt');
 var inquirer = require('inquirer');
 require('dotenv').config();
 let end = false;
-guessesLeft = 8;
+var guessesLeft = 8;
 var winArray = [];
 
 function Word(word, definition, partOfSpeech, blankWordArray) {
@@ -25,7 +25,6 @@ inquirer.prompt([
   }
 ]).then(function(par) {
   if (par.gameStart) {
-    guessesLeft = 8;
     winArray = [];
     generate();
   } else {
@@ -49,7 +48,9 @@ function generate() {
       let newPartSpeech = result.body.results[0].partOfSpeech;
       let newWord = result.body.word;
       let arr = [];
+      guessesLeft = 8;
       let dailyQuote = result.caseless['dict']['x-ratelimit-requests-remaining'];
+      console.log("");
       console.log("You have " + dailyQuote + " games left for today");
       let currWord = new Word(newWord, newDefinition, newPartSpeech, arr, dailyQuote);
       
@@ -99,7 +100,7 @@ function guessLetter(myWord, leng) {
           winArray.push(guess.userGuess.toUpperCase());
           console.log("");
           console.log("Great job!");
-
+          // letterFound = guess.userGuess.toUpperCase()
           if (winArray.length === myWord.blankWordArray.length) {
 
             console.log("###############################################");
@@ -110,6 +111,20 @@ function guessLetter(myWord, leng) {
             console.log("###############################################");            
             console.log("");
 
+// after its closed 
+// if(found) {
+// console.log("Good guess")}
+// 
+// if(wordGuessed) {
+// whatever it takes to restart a game or offer restart
+// }
+// 
+// if(wordGuessed) {
+//  callInquirer() 
+//  put code for propting user to start another game inside this if after loop is over
+//  It will run if wordGuessed is true
+//  SEt wordGuessed to TRUE in the loop
+// }
             inquirer.prompt([
               {
                 type: "confirm",
@@ -146,6 +161,8 @@ function guessLetter(myWord, leng) {
           console.log("###############################################");
           console.log("");
           console.log("Game over");
+          console.log("");
+          console.log("Correct word was: "+ myWord.word);
           console.log("");
           console.log("###############################################");
           console.log("");
