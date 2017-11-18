@@ -48,7 +48,10 @@ function generate() {
       let newPartSpeech = result.body.results[0].partOfSpeech;
       let newWord = result.body.word;
       let arr = [];
-      let currWord = new Word(newWord, newDefinition, newPartSpeech, arr);
+      let dailyQuote = result.caseless['dict']['x-ratelimit-requests-remaining'];
+      console.log("You have " + dailyQuote + " games left for today");
+      let currWord = new Word(newWord, newDefinition, newPartSpeech, arr, dailyQuote);
+      
       //console.log(result.caseless['dict']['x-ratelimit-requests-remaining']);
       game(currWord);
 
@@ -61,9 +64,12 @@ function game(word) {
 
   let myWord = word;
   let leng = myWord.word.length;
+  //console.log(myDailyQuote);
   //console.log(myWord);
   console.log("");
   console.log("Definition: " + myWord.definition);
+  console.log("");
+  console.log("! Hint: use <space> to guess all the dashes in your guessing word!");
 
   for (var i = 0; i < leng; i++) {
     myWord.blankWordArray.push("*");
@@ -105,7 +111,8 @@ function guessLetter(myWord, leng) {
             console.log("Congratulations!!");
             console.log("You won!!!!!!");
             console.log("");
-            console.log("###############################################");
+            //console.log(myDailyQuote + "games left");
+            console.log("###############################################");            
             console.log("");
 
             inquirer.prompt([
@@ -122,6 +129,7 @@ function guessLetter(myWord, leng) {
                 console.log("");
                 console.log("That was fun. Come back soon!");
                 console.log("");
+                //console.log(myDailyQuote + "games left");
                 console.log("###############################################");
                 process.exit();
               }
