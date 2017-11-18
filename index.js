@@ -26,6 +26,7 @@ inquirer.prompt([
 ]).then(function(par) {
   if (par.gameStart) {
     guessesLeft = 8;
+    winArray = [];
     generate();
   } else {
     console.log("See you next time then. You are probably are not good at this game anyway...");
@@ -52,7 +53,6 @@ function generate() {
       console.log("You have " + dailyQuote + " games left for today");
       let currWord = new Word(newWord, newDefinition, newPartSpeech, arr, dailyQuote);
       
-      //console.log(result.caseless['dict']['x-ratelimit-requests-remaining']);
       game(currWord);
 
     }
@@ -64,12 +64,10 @@ function game(word) {
 
   let myWord = word;
   let leng = myWord.word.length;
-  //console.log(myDailyQuote);
-  //console.log(myWord);
   console.log("");
   console.log("Definition: " + myWord.definition);
   console.log("");
-  console.log("! Hint: use <space> to guess all the dashes in your guessing word!");
+  console.log("Hint: You word might contain spaces. Use <space button>");
 
   for (var i = 0; i < leng; i++) {
     myWord.blankWordArray.push("*");
@@ -101,17 +99,14 @@ function guessLetter(myWord, leng) {
           winArray.push(guess.userGuess.toUpperCase());
           console.log("");
           console.log("Great job!");
-          //console.log(myWord.blankWordArray);
-          //console.log(myWord.finalWord);
 
           if (winArray.length === myWord.blankWordArray.length) {
 
             console.log("###############################################");
-            
+            console.log("");
             console.log("Congratulations!!");
             console.log("You won!!!!!!");
             console.log("");
-            //console.log(myDailyQuote + "games left");
             console.log("###############################################");            
             console.log("");
 
@@ -129,7 +124,6 @@ function guessLetter(myWord, leng) {
                 console.log("");
                 console.log("That was fun. Come back soon!");
                 console.log("");
-                //console.log(myDailyQuote + "games left");
                 console.log("###############################################");
                 process.exit();
               }
