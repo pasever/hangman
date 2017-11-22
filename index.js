@@ -24,7 +24,7 @@ inquirer.prompt([
   {
     type: "confirm",
     name: "gameStart",
-    message: "Welcome to the hangman. Ready to start a new game?"
+    message: "Welcome to hangman. Ready to start a new game?"
   }
 ]).then(function(par) {
   if (par.gameStart) {
@@ -108,8 +108,6 @@ function guessLetter(myWord, leng) {
           // letterFound = guess.userGuess.toUpperCase()
           if (winArray.length === myWord.blankWordArray.length) {
 
-            //clearTimeout(clearScreen);
-
             end = true;
             console.log("###############################################");
             console.log("");
@@ -119,24 +117,7 @@ function guessLetter(myWord, leng) {
             console.log("###############################################");
             console.log("");
 
-            inquirer.prompt([
-              {
-                type: "confirm",
-                name: "gameStart",
-                message: "Do you want to start another game?"
-              }
-            ]).then(function(par) {
-              if (par.gameStart) {
-                generate();
-              } else {
-                console.log("###############################################");
-                console.log("");
-                console.log("That was fun. Come back soon!");
-                console.log("");
-                console.log("###############################################");
-                process.exit();
-              }
-            });
+            restartGame();
             return;
           }
         }
@@ -152,8 +133,6 @@ function guessLetter(myWord, leng) {
 
         if (guessesLeft === 0) {
 
-          //clearTimeout(clearScreen);
-
           end = true;
           console.log("###############################################");
           console.log("");
@@ -164,23 +143,7 @@ function guessLetter(myWord, leng) {
           console.log("###############################################");
           console.log("");
 
-          inquirer.prompt([
-
-            {
-              type: "confirm",
-              name: "gameStart",
-              message: "Do you want to start another game?"
-            }
-          ]).then(function(par) {
-            if (par.gameStart) {
-              generate();
-            } else {
-              console.log("");
-              console.log("That was fun. Come back soon!");
-              console.log("");
-              process.exit();
-            }
-          });
+          restartGame();
           return;
         }
       }
@@ -193,6 +156,7 @@ function guessLetter(myWord, leng) {
           console.log("Definition: " + myWord.definition);
           console.log("");
           console.log("You have " + guessesLeft + " attempts left");
+          console.log("Correct word was: " + myWord.word);
           guessLetter(myWord, leng);
         }, 1000);
 
@@ -206,6 +170,27 @@ function guessLetter(myWord, leng) {
   }
 }
 
+function restartGame() {
+
+  inquirer.prompt([
+    {
+      type: "confirm",
+      name: "gameStart",
+      message: "Do you want to start another game?"
+    }
+  ]).then(function(par) {
+    if (par.gameStart) {
+      generate();
+    } else {
+      console.log("###############################################");
+      console.log("");
+      console.log("That was fun. Come back soon!");
+      console.log("");
+      console.log("###############################################");
+      process.exit();
+    }
+  });
+}
 // after its closed
 // if(found) {
 // console.log("Good guess")}
