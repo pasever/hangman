@@ -5,9 +5,11 @@ require('dotenv').config();
 let end = false;
 var guessesLeft = 8;
 var winArray = [];
+const readline = require('readline');
+var clearScreen;
 
+//the word constructor
 function Word(word, definition, partOfSpeech, blankWordArray) {
-
   this.word = word;
   this.definition = definition;
   this.partOfSpeech = partOfSpeech;
@@ -17,6 +19,7 @@ function Word(word, definition, partOfSpeech, blankWordArray) {
 
 prompt.start();
 
+//starting the game
 inquirer.prompt([
   {
     type: "confirm",
@@ -49,11 +52,11 @@ function generate() {
       let newWord = result.body.word;
       let arr = [];
       guessesLeft = 8;
+      end = false;
       let dailyQuote = result.caseless['dict']['x-ratelimit-requests-remaining'];
       console.log("");
       console.log("You have " + dailyQuote + " games left for today");
       let currWord = new Word(newWord, newDefinition, newPartSpeech, arr, dailyQuote);
-      
       game(currWord);
 
     }
@@ -92,7 +95,9 @@ function guessLetter(myWord, leng) {
       }
     ]).then(function(guess) {
       var found = false;
+
       for (var i = 0; i < leng; i++) {
+
         if (guess.userGuess.toUpperCase() === myWord.finalWord[i].toUpperCase()) {
 
           found = true;
@@ -103,28 +108,17 @@ function guessLetter(myWord, leng) {
           // letterFound = guess.userGuess.toUpperCase()
           if (winArray.length === myWord.blankWordArray.length) {
 
+            //clearTimeout(clearScreen);
+
+            end = true;
             console.log("###############################################");
             console.log("");
             console.log("Congratulations!!");
             console.log("You won!!!!!!");
             console.log("");
-            console.log("###############################################");            
+            console.log("###############################################");
             console.log("");
 
-// after its closed 
-// if(found) {
-// console.log("Good guess")}
-// 
-// if(wordGuessed) {
-// whatever it takes to restart a game or offer restart
-// }
-// 
-// if(wordGuessed) {
-//  callInquirer() 
-//  put code for propting user to start another game inside this if after loop is over
-//  It will run if wordGuessed is true
-//  SEt wordGuessed to TRUE in the loop
-// }
             inquirer.prompt([
               {
                 type: "confirm",
@@ -148,27 +142,30 @@ function guessLetter(myWord, leng) {
         }
       }
       if (!found) {
+
         console.log("");
         console.log("Please try again!");
         guessesLeft--;
         console.log("");
         console.log("You have " + guessesLeft + " attempts left");
         console.log("");
-        //console.log(myWord.blankWordArray);
 
         if (guessesLeft === 0) {
 
+          //clearTimeout(clearScreen);
+
+          end = true;
           console.log("###############################################");
           console.log("");
           console.log("Game over");
           console.log("");
-          console.log("Correct word was: "+ myWord.word);
+          console.log("Correct word was: " + myWord.word);
           console.log("");
           console.log("###############################################");
           console.log("");
 
           inquirer.prompt([
-            
+
             {
               type: "confirm",
               name: "gameStart",
@@ -183,13 +180,24 @@ function guessLetter(myWord, leng) {
               console.log("");
               process.exit();
             }
-          });  
+          });
           return;
-        }  
+        }
       }
-      
-      guessLetter(myWord, leng);
-      
+
+      if (guessesLeft) {
+
+        clearScreen = setTimeout(() => {
+          readline.cursorTo(process.stdout, 0, 0);
+          readline.clearScreenDown(process.stdout);
+          console.log("Definition: " + myWord.definition);
+          console.log("");
+          console.log("You have " + guessesLeft + " attempts left");
+          guessLetter(myWord, leng);
+        }, 1000);
+
+      }
+
     });
 
   } else {
@@ -197,3 +205,18 @@ function guessLetter(myWord, leng) {
     return;
   }
 }
+
+// after its closed
+// if(found) {
+// console.log("Good guess")}
+//
+// if(wordGuessed) {
+// whatever it takes to restart a game or offer restart
+// }
+//
+// if(wordGuessed) {
+//  callInquirer()
+//  put code for propting user to start another game inside this if after loop is over
+//  It will run if wordGuessed is true
+//  SEt wordGuessed to TRUE in the loop
+// }
