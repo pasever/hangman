@@ -4,7 +4,6 @@ var inquirer = require('inquirer');
 require('dotenv').config();
 let end = false;
 var guessesLeft = 8;
-var winArray = [];
 const readline = require('readline');
 var clearScreen;
 
@@ -28,7 +27,6 @@ inquirer.prompt([
   }
 ]).then(function(par) {
   if (par.gameStart) {
-    winArray = [];
     generate();
   } else {
     console.log("See you next time then. You are probably are not good at this game anyway...");
@@ -36,6 +34,7 @@ inquirer.prompt([
   }
 });
 
+//API call / generating a new word
 function generate() {
 
   unirest.get("https://wordsapiv1.p.mashape.com/words/?random=true").header("X-Mashape-Key", process.env.MASHAPE_KEY).header("Accept", "application/json").end(function(result) {
@@ -64,8 +63,10 @@ function generate() {
 
 }
 
+// passing the generate word to the game function 
+// and displaying blank word so the player can start guessing 
 function game(word) {
-
+  let winArray = [];
   let myWord = word;
   let leng = myWord.word.length;
   console.log("");
@@ -77,11 +78,11 @@ function game(word) {
     myWord.blankWordArray.push("*");
   }
 
-  guessLetter(myWord, leng);
+  guessLetter(myWord, leng, winArray);
 
 }
-
-function guessLetter(myWord, leng) {
+//gueesing the letter
+function guessLetter(myWord, leng, winArray) {
   console.log("");
   console.log(myWord.blankWordArray.join(" "));
   console.log("");
@@ -106,6 +107,8 @@ function guessLetter(myWord, leng) {
           console.log("");
           console.log("Great job!");
           // letterFound = guess.userGuess.toUpperCase()
+          
+          //if word is guessed - player won 
           if (winArray.length === myWord.blankWordArray.length) {
 
             end = true;
@@ -122,6 +125,7 @@ function guessLetter(myWord, leng) {
           }
         }
       }
+      // if the guess was incorrect
       if (!found) {
 
         console.log("");
@@ -147,7 +151,7 @@ function guessLetter(myWord, leng) {
           return;
         }
       }
-
+      // clears the terminal for a better view but couple of lines 
       if (guessesLeft) {
 
         clearScreen = setTimeout(() => {
@@ -157,7 +161,7 @@ function guessLetter(myWord, leng) {
           console.log("");
           console.log("You have " + guessesLeft + " attempts left");
           console.log("Correct word was: " + myWord.word);
-          guessLetter(myWord, leng);
+          guessLetter(myWord, leng, winArray);
         }, 1000);
 
       }
@@ -170,6 +174,7 @@ function guessLetter(myWord, leng) {
   }
 }
 
+// if player wants to play again
 function restartGame() {
 
   inquirer.prompt([
@@ -191,17 +196,3 @@ function restartGame() {
     }
   });
 }
-// after its closed
-// if(found) {
-// console.log("Good guess")}
-//
-// if(wordGuessed) {
-// whatever it takes to restart a game or offer restart
-// }
-//
-// if(wordGuessed) {
-//  callInquirer()
-//  put code for propting user to start another game inside this if after loop is over
-//  It will run if wordGuessed is true
-//  SEt wordGuessed to TRUE in the loop
-// }
