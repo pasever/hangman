@@ -41,6 +41,7 @@ function generate() {
 
     //console.log(result.status, result.headers, result.body)
     if (typeof result.body.results === 'undefined') {
+      console.log("Loading...")
 
       generate();
 
@@ -105,8 +106,7 @@ function guessLetter(myWord, leng, winArray) {
           myWord.blankWordArray[i] = guess.userGuess.toUpperCase();
           winArray.push(guess.userGuess.toUpperCase());
           console.log("");
-          console.log("Great job!");
-          // letterFound = guess.userGuess.toUpperCase()
+          //console.log("Great job!");
           
           //if word is guessed - player won 
           if (winArray.length === myWord.blankWordArray.length) {
@@ -125,6 +125,7 @@ function guessLetter(myWord, leng, winArray) {
           }
         }
       }
+      
       // if the guess was incorrect
       if (!found) {
 
@@ -160,7 +161,7 @@ function guessLetter(myWord, leng, winArray) {
           console.log("Definition: " + myWord.definition);
           console.log("");
           console.log("You have " + guessesLeft + " attempts left");
-          console.log("Correct word was: " + myWord.word);
+          //console.log("Correct word was: " + myWord.word);
           guessLetter(myWord, leng, winArray);
         }, 1000);
 
