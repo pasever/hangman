@@ -73,7 +73,7 @@ function game(word) {
   console.log("");
   console.log("Definition: " + myWord.definition);
   console.log("");
-  console.log("Hint: You word might contain spaces. Use <space button>");
+  console.log("Hint: Your word might contain spaces. Use <space button>");
 
   for (var i = 0; i < leng; i++) {
     myWord.blankWordArray.push("*");
@@ -115,6 +115,7 @@ function guessLetter(myWord, leng, winArray) {
             console.log("###############################################");
             console.log("");
             console.log("Congratulations!!");
+            console.log("It was: " + myWord.word);
             console.log("You won!!!!!!");
             console.log("");
             console.log("###############################################");
