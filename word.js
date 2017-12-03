@@ -3,10 +3,7 @@ function Word(word, definition, partOfSpeech, blankWordArray) {
   this.definition = definition;
   this.partOfSpeech = partOfSpeech;
   this.blankWordArray = blankWordArray;
-  this.finalWord = [...word];
+  this.finalWord = [...(word.toUpperCase())];
 }
 
-
-module.exports = {
-	Word : Word
-};
+exports.Word = Word;

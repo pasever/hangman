@@ -6,15 +6,7 @@ let end = false;
 var guessesLeft = 8;
 const readline = require('readline');
 var clearScreen;
-
-//the word constructor
-function Word(word, definition, partOfSpeech, blankWordArray) {
-  this.word = word;
-  this.definition = definition;
-  this.partOfSpeech = partOfSpeech;
-  this.blankWordArray = blankWordArray;
-  this.finalWord = [...(word.toUpperCase())];
-}
+const Word = require('./word.js');
 
 prompt.start();
 
@@ -56,7 +48,7 @@ function generate() {
       let dailyQuote = result.caseless['dict']['x-ratelimit-requests-remaining'];
       console.log("");
       console.log("You have " + dailyQuote + " games left for today");
-      let currWord = new Word(newWord, newDefinition, newPartSpeech, arr, dailyQuote);
+      let currWord = new Word.Word(newWord, newDefinition, newPartSpeech, arr, dailyQuote);
       game(currWord);
 
     }
@@ -82,6 +74,7 @@ function game(word) {
   guessLetter(myWord, leng, winArray);
 
 }
+
 //gueesing the letter
 function guessLetter(myWord, leng, winArray) {
   console.log("");
