@@ -1,6 +1,7 @@
-var unirest = require('unirest');
-var prompt = require('prompt');
-var inquirer = require('inquirer');
+const unirest = require('unirest');
+const prompt = require('prompt');
+const inquirer = require('inquirer');
+const CFonts = require('cfonts');
 require('dotenv').config();
 let end = false;
 var guessesLeft = 8;
@@ -53,7 +54,6 @@ function generate() {
 
     }
   });
-
 }
 
 // passing the generate word to the game function 
@@ -68,7 +68,7 @@ function game(word) {
   console.log("Hint: Your word might contain spaces. Use <space button>");
 
   for (var i = 0; i < leng; i++) {
-    myWord.blankWordArray.push("*");
+    myWord.blankWordArray.push("_");
   }
 
   guessLetter(myWord, leng, winArray);
@@ -78,8 +78,19 @@ function game(word) {
 //gueesing the letter
 function guessLetter(myWord, leng, winArray) {
   console.log("");
-  console.log(myWord.blankWordArray.join(" "));
+  //console.log(myWord.blankWordArray.join(" "));
   console.log("");
+  
+  CFonts.say(`${myWord.blankWordArray.join(" ")}`, {
+      font: 'chrome',                          //define the font face 
+      align: 'left',                           //define text alignment 
+      colors: ['magenta', 'white', 'cyan'],    //define all colors 
+      background: 'black',                     //define the background color 
+      letterSpacing: 0,                        //define letter spacing 
+      lineHeight: 1,                           //define the line height 
+      space: true,                             //define if the output text should have empty lines on top and on the bottom 
+      maxLength: '0'                           //define how many character can be on one line 
+  });
 
   if (!end) {
     inquirer.prompt([
