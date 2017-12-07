@@ -9,14 +9,20 @@ const readline = require('readline');
 var clearScreen;
 const Word = require('./word.js');
 
+CFonts.say('Welcome To My Hangman!', {
+    font: 'chrome',                                                                                               
+    letterSpacing: 0                                                                                                       
+});
+
 prompt.start();
+
 
 //starting the game
 inquirer.prompt([
   {
     type: "confirm",
     name: "gameStart",
-    message: "Welcome to hangman. Ready to start a new game?"
+    message: "Ready to start a new game?"
   }
 ]).then(function(par) {
   if (par.gameStart) {
@@ -77,21 +83,14 @@ function game(word) {
 
 //gueesing the letter
 function guessLetter(myWord, leng, winArray) {
-  console.log("");
   //console.log(myWord.blankWordArray.join(" "));
-  console.log("");
+  //console.log("It was: " + myWord.word);
   
   CFonts.say(`${myWord.blankWordArray.join(" ")}`, {
-      font: 'chrome',                          //define the font face 
-      align: 'left',                           //define text alignment 
-      colors: ['magenta', 'white', 'cyan'],    //define all colors 
-      background: 'black',                     //define the background color 
-      letterSpacing: 0,                        //define letter spacing 
-      lineHeight: 1,                           //define the line height 
-      space: true,                             //define if the output text should have empty lines on top and on the bottom 
-      maxLength: '0'                           //define how many character can be on one line 
-  });
-
+      font: 'chrome',                                                  
+      colors: ['magenta', 'white', 'cyan'],                         
+      letterSpacing: 0                                                                             
+});
   if (!end) {
     inquirer.prompt([
       {
@@ -116,14 +115,14 @@ function guessLetter(myWord, leng, winArray) {
           if (winArray.length === myWord.blankWordArray.length) {
 
             end = true;
-            console.log("###############################################");
-            console.log("");
-            console.log("Congratulations!!");
-            console.log("It was: " + myWord.word);
-            console.log("You won!!!!!!");
-            console.log("");
-            console.log("###############################################");
-            console.log("");
+            
+            CFonts.say('Congratulations! |  You won!', {
+                font: 'chrome',
+                colors: ['yellow'],                                                                                               
+                letterSpacing: 0                                                                                                       
+            });
+    
+            console.log("You guessed correctly: " + myWord.word);
 
             restartGame();
             return;
@@ -144,14 +143,11 @@ function guessLetter(myWord, leng, winArray) {
         if (guessesLeft === 0) {
 
           end = true;
-          console.log("###############################################");
-          console.log("");
-          console.log("Game over");
-          console.log("");
-          console.log("Correct word was: " + myWord.word);
-          console.log("");
-          console.log("###############################################");
-          console.log("");
+          CFonts.say(`Game Over! |Answer: ${myWord.word}`, {
+              font: 'chrome',
+              colors: ['red', 'red', 'red'],                                                                                               
+              letterSpacing: 0                                                                                                       
+          });
 
           restartGame();
           return;
@@ -193,11 +189,12 @@ function restartGame() {
     if (par.gameStart) {
       generate();
     } else {
-      console.log("###############################################");
-      console.log("");
-      console.log("That was fun. Come back soon!");
-      console.log("");
-      console.log("###############################################");
+      
+      CFonts.say(`Thank you for playing!`, {
+          font: 'chrome',                                                                                             
+          letterSpacing: 0                                                                                                       
+      });
+      
       process.exit();
     }
   });
