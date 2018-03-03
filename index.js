@@ -4,18 +4,18 @@ const inquirer = require('inquirer');
 const CFonts = require('cfonts');
 require('dotenv').config();
 let end = false;
-var guessesLeft = 8;
+let guessesLeft = 8;
 const readline = require('readline');
 var clearScreen;
 const Word = require('./word.js');
+let allLetters = [];
 
 CFonts.say('Welcome To My Hangman!', {
-    font: 'chrome',                                                                                               
-    letterSpacing: 0                                                                                                       
+  font: 'chrome',
+  letterSpacing: 0
 });
 
 prompt.start();
-
 
 //starting the game
 inquirer.prompt([
@@ -24,7 +24,7 @@ inquirer.prompt([
     name: "gameStart",
     message: "Ready to start a new game?"
   }
-]).then(function(par) {
+]).then(par => {
   if (par.gameStart) {
     generate();
   } else {
@@ -36,7 +36,7 @@ inquirer.prompt([
 //API call / generating a new word
 function generate() {
 
-  unirest.get("https://wordsapiv1.p.mashape.com/words/?random=true").header("X-Mashape-Key", process.env.MASHAPE_KEY).header("Accept", "application/json").end(function(result) {
+  unirest.get("https://wordsapiv1.p.mashape.com/words/?random=true").header("X-Mashape-Key", process.env.MASHAPE_KEY).header("Accept", "application/json").end((result) => {
 
     //console.log(result.status, result.headers, result.body)
     if (typeof result.body.results === 'undefined') {
@@ -51,6 +51,7 @@ function generate() {
       let newWord = result.body.word;
       let arr = [];
       guessesLeft = 8;
+      allLetters = [];
       end = false;
       let dailyQuote = result.caseless['dict']['x-ratelimit-requests-remaining'];
       console.log("");
@@ -62,18 +63,20 @@ function generate() {
   });
 }
 
-// passing the generate word to the game function 
-// and displaying blank word so the player can start guessing 
+// passing the generate word to the game function
+// and displaying blank word so the player can start guessing
 function game(word) {
   let winArray = [];
   let myWord = word;
   let leng = myWord.word.length;
+  let allLetters = [];
+
   console.log("");
   console.log("Definition: " + myWord.definition);
   console.log("");
   console.log("Hint: Your word might contain spaces. Use <space button>");
 
-  for (var i = 0; i < leng; i++) {
+  for (let i = 0; i < leng; i++) {
     myWord.blankWordArray.push("_");
   }
 
@@ -85,12 +88,15 @@ function game(word) {
 function guessLetter(myWord, leng, winArray) {
   //console.log(myWord.blankWordArray.join(" "));
   //console.log("It was: " + myWord.word);
-  
+
   CFonts.say(`${myWord.blankWordArray.join(" ")}`, {
-      font: 'chrome',                                                  
-      colors: ['magenta', 'white', 'cyan'],                         
-      letterSpacing: 0                                                                             
-});
+    font: 'chrome',
+    colors: [
+      'magenta', 'white', 'cyan'
+    ],
+    letterSpacing: 0
+  });
+
   if (!end) {
     inquirer.prompt([
       {
@@ -100,28 +106,31 @@ function guessLetter(myWord, leng, winArray) {
       }
     ]).then(function(guess) {
       var found = false;
+      
+      //allLetters.push(guess.userGuess.toUpperCase());
 
-      for (var i = 0; i < leng; i++) {
+      for (let i = 0; i < leng; i++) {
 
         if (guess.userGuess.toUpperCase() === myWord.finalWord[i].toUpperCase()) {
 
+          //ifLetterIsGuessed();
           found = true;
           myWord.blankWordArray[i] = guess.userGuess.toUpperCase();
           winArray.push(guess.userGuess.toUpperCase());
-          console.log("");
+          //allLetters.push(guess.userGuess.toUpperCase());
           //console.log("Great job!");
-          
-          //if word is guessed - player won 
+
+          //if word is guessed - player won
           if (winArray.length === myWord.blankWordArray.length) {
 
             end = true;
-            
+
             CFonts.say('Congratulations! |  You won!', {
-                font: 'chrome',
-                colors: ['yellow'],                                                                                               
-                letterSpacing: 0                                                                                                       
+              font: 'chrome',
+              colors: ['yellow'],
+              letterSpacing: 0
             });
-    
+
             console.log("You guessed correctly: " + myWord.word);
 
             restartGame();
@@ -129,7 +138,7 @@ function guessLetter(myWord, leng, winArray) {
           }
         }
       }
-      
+
       // if the guess was incorrect
       if (!found) {
 
@@ -139,21 +148,24 @@ function guessLetter(myWord, leng, winArray) {
         console.log("");
         console.log("You have " + guessesLeft + " attempts left");
         console.log("");
+        //allLetters.push(guess.userGuess.toUpperCase());
 
         if (guessesLeft === 0) {
 
           end = true;
           CFonts.say(`Game Over! |Answer: ${myWord.word}`, {
-              font: 'chrome',
-              colors: ['red', 'red', 'red'],                                                                                               
-              letterSpacing: 0                                                                                                       
+            font: 'chrome',
+            colors: [
+              'red', 'red', 'red'
+            ],
+            letterSpacing: 0
           });
 
           restartGame();
           return;
         }
       }
-      // clears the terminal for a better view but couple of lines 
+      // clears the terminal for a better view but couple of lines
       if (guessesLeft) {
 
         clearScreen = setTimeout(() => {
@@ -162,6 +174,7 @@ function guessLetter(myWord, leng, winArray) {
           console.log("Definition: " + myWord.definition);
           console.log("");
           console.log("You have " + guessesLeft + " attempts left");
+          //console.log(`Letters guessed: ${allLetters}`);
           //console.log("Correct word was: " + myWord.word);
           guessLetter(myWord, leng, winArray);
         }, 1000);
@@ -189,13 +202,15 @@ function restartGame() {
     if (par.gameStart) {
       generate();
     } else {
-      
+
       CFonts.say(`Thank you for playing!`, {
-          font: 'chrome',                                                                                             
-          letterSpacing: 0                                                                                                       
+        font: 'chrome',
+        letterSpacing: 0
       });
-      
+
       process.exit();
     }
   });
 }
+
+
