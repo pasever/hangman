@@ -36,7 +36,10 @@ inquirer.prompt([
 //API call / generating a new word
 function generate() {
 
-  unirest.get("https://wordsapiv1.p.mashape.com/words/?random=true").header("X-Mashape-Key", process.env.MASHAPE_KEY).header("Accept", "application/json").end((result) => {
+  unirest.get("https://wordsapiv1.p.mashape.com/words/?random=true")
+         .header("X-Mashape-Key", process.env.MASHAPE_KEY)
+         .header("Accept", "application/json")
+         .end(result => {
 
     //console.log(result.status, result.headers, result.body)
     if (typeof result.body.results === 'undefined') {
@@ -44,7 +47,7 @@ function generate() {
 
       generate();
 
-    } else {
+    } 
 
       let newDefinition = result.body.results[0].definition;
       let newPartSpeech = result.body.results[0].partOfSpeech;
@@ -59,7 +62,6 @@ function generate() {
       let currWord = new Word.Word(newWord, newDefinition, newPartSpeech, arr, dailyQuote);
       game(currWord);
 
-    }
   });
 }
 
@@ -104,7 +106,8 @@ function guessLetter(myWord, leng, winArray) {
         name: "userGuess",
         message: "Please, guess a letter"
       }
-    ]).then(function(guess) {
+    ]).then(guess => {
+      
       var found = false;
       
       //allLetters.push(guess.userGuess.toUpperCase());
@@ -178,13 +181,9 @@ function guessLetter(myWord, leng, winArray) {
           //console.log("Correct word was: " + myWord.word);
           guessLetter(myWord, leng, winArray);
         }, 1000);
-
       }
-
     });
-
   } else {
-
     return;
   }
 }
@@ -198,7 +197,7 @@ function restartGame() {
       name: "gameStart",
       message: "Do you want to start another game?"
     }
-  ]).then(function(par) {
+  ]).then(par => {
     if (par.gameStart) {
       generate();
     } else {
